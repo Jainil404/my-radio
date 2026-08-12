@@ -2,6 +2,14 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { Track } from '../data/tracks';
 
+// Tell TypeScript that YouTube will provide these variables later
+declare global {
+  interface Window {
+    YT: any;
+    onYouTubeIframeAPIReady: () => void;
+  }
+}
+
 // Define sub-components at module scope to prevent React remounting the vinyl animation
 const PlayIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 ml-1">
