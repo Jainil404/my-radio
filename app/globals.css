@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@theme {
+  --color-accent: #f97316; /* A warm orange, fits the nostalgia vibe */
+  
+  --animate-spin-slow: spin 8s linear infinite;
+  --animate-blink: blink 1s step-start infinite;
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+}
+
+/* Background Handling */
+.hero-bg {
+  background-image: url('/bg/scene-wide.png');
+}
+
+@media (orientation: portrait) {
+  .hero-bg {
+    background-image: url('/bg/scene-tall.png');
+  }
+}
+
+/* Hide scrollbar for a clean app feel */
+::-webkit-scrollbar {
+  display: none;
+}
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
