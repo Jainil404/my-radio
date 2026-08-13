@@ -37,10 +37,24 @@ export default function Home() {
           <span className="text-xl tracking-wide"> Mountain's choise </span>
         </div>
 
-        <div className="flex items-center gap-3">
-          <a href="#" className="opacity-70 hover:opacity-100 transition-opacity">
-            <span className="text-sm font-medium tracking-wide">Share</span>
-          </a>
+        <div className="flex flex-col items-end gap-1.5 mt-1">
+          {/* Signal Pill */}
+          <div className="border border-white/60 rounded-full px-3 py-1 mb-1 backdrop-blur-sm">
+            <span className="text-[9px] uppercase tracking-widest font-medium text-white/90">
+              Signal: Weak (H+)
+            </span>
+          </div>
+          
+          {/* Environment Details */}
+          <span className="text-[9px] uppercase tracking-widest text-white/90">
+            Temp: 4°C
+          </span>
+          <span className="text-[9px] uppercase tracking-widest text-white/70">
+            Location: 34.1526° N, 77.5771° E
+          </span>
+          <span className="text-[9px] uppercase tracking-widest text-white/70">
+            "Maggi Point - 1.2KM"
+          </span>
         </div>
       </header>
 
