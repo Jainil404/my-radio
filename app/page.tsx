@@ -33,7 +33,7 @@ export default function Home() {
         </div>
         
         <div className="flex flex-col items-center gap-1 opacity-80">
-          <span className="text-[10px] uppercase tracking-widest font-semibold text-accent">Live</span>
+          <span className="text-[30px] uppercase tracking-widest font-semibold text-accent">Live</span>
           <span className="text-xs tracking-wide"> Mountain's choise </span>
         </div>
 
