@@ -32,27 +32,28 @@ export default function Home() {
           <Clock />
         </div>
         
-        <div className="flex flex-col items-center gap-1 opacity-80">
-          <span className="text-[30px] uppercase tracking-widest font-semibold text-accent">Live</span>
-          <span className="text-xl tracking-wide"> Mountain's choise </span>
+        {/* Center Title */}
+        <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 opacity-80 text-center">
+          <span className="text-[15px] uppercase tracking-widest font-semibold text-accent">Live</span>
+          <span className="text-[15px] tracking-wide">Mountain's Choice</span>
         </div>
 
         <div className="flex flex-col items-end gap-1.5 mt-1">
           {/* Signal Pill */}
           <div className="border border-white/60 rounded-full px-3 py-1 mb-1 backdrop-blur-sm">
-            <span className="text-[9px] uppercase tracking-widest font-medium text-white/90">
+            <span className="text-[15px] uppercase tracking-widest font-medium text-white/90">
               Signal: Weak (H+)
             </span>
           </div>
           
           {/* Environment Details */}
-          <span className="text-[9px] uppercase tracking-widest text-white/90">
+          <span className="text-[12px] uppercase tracking-widest text-white/90">
             Temp: 4°C
           </span>
-          <span className="text-[9px] uppercase tracking-widest text-white/70">
+          <span className="text-[12px] uppercase tracking-widest text-white/70">
             Location: 34.1526° N, 77.5771° E
           </span>
-          <span className="text-[9px] uppercase tracking-widest text-white/70">
+          <span className="text-[12px] uppercase tracking-widest text-white/70">
             "Maggi Point - 1.2KM"
           </span>
         </div>
