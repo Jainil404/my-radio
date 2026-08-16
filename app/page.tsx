@@ -96,9 +96,12 @@ export default function Home() {
           <span 
             className="tracking-[0.1em] transition-all duration-500"
             style={{ 
-              fontFamily: currentGenre === 'moody' ? 'var(--font-BebasNote-Bold)' : 'inherit',
-              fontSize: currentGenre === 'moody' ? '56px' : '15px', // Bebas looks much better when it is larger!
-              fontWeight: currentGenre === 'moody' ? 'normal' : '500'
+              fontFamily: 
+                currentGenre === 'bollywood' ? 'var(--font-pacifico)' : 
+                currentGenre === 'desiHipHop' ? 'var(--font-amsterdam)' : 
+                'var(--font-BebasNote-Bold)',
+              fontSize: '28px', // Kept them all at 28px so they are nice and readable!
+              fontWeight: 'normal'
             }}
           >
             {vibe.title}

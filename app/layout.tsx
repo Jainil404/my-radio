@@ -13,10 +13,20 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// 1. Load your custom BebasNote-Bold font here
+// 1. Load all your custom fonts here
 const bebasNoteBold = localFont({
   src: "./fonts/BebasNote-Bold.ttf",
   variable: "--font-BebasNote-Bold",
+});
+
+const amsterdamFont = localFont({
+  src: "./fonts/amsterdam.ttf",
+  variable: "--font-amsterdam",
+});
+
+const pacificoFont = localFont({
+  src: "./fonts/Pacifico.ttf",
+  variable: "--font-pacifico",
 });
 
 export const metadata: Metadata = {
@@ -32,8 +42,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      // 2. Add the bebasNoteBold variable to your app's HTML wrapper
-      className={`${geistSans.variable} ${geistMono.variable} ${bebasNoteBold.variable} h-full antialiased`}
+      // 2. Add ALL font variables to your app's HTML wrapper
+      className={`${geistSans.variable} ${geistMono.variable} ${bebasNoteBold.variable} ${amsterdamFont.variable} ${pacificoFont.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
