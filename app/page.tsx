@@ -91,10 +91,13 @@ export default function Home() {
         </div>
         
        {/* Massive Center Title Area */}
-      <div className="flex-1 flex flex-col items-center justify-center w-full px-4 text-center z-30 pointer-events-none drop-shadow-2xl">
-        <span className="text-[14px] md:text-[18px] uppercase tracking-[0.5em] font-bold text-white/80 mb-2 md:mb-6">
+      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-20 drop-shadow-2xl w-full px-4 text-center">
+        {/* Restored Original Tiny "Live" Text */}
+        <span className="text-[12px] uppercase tracking-[0.3em] font-bold text-accent mb-1">
           Live
         </span>
+        
+        {/* Flawlessly Centered Main Title */}
         <span 
           className="transition-all duration-700 w-full"
           style={{ 
@@ -102,11 +105,10 @@ export default function Home() {
               currentGenre === 'bollywood' ? 'var(--font-pacifico)' : 
               currentGenre === 'desiHipHop' ? 'var(--font-amsterdam)' : 
               'var(--font-BebasNote-Bold)',
-            // clamp() forces the text to be huge on desktop, but shrink safely on mobile!
             fontSize: 'clamp(50px, 10vw, 130px)', 
             lineHeight: '1.2',
             fontWeight: 'normal',
-            textShadow: '0 10px 40px rgba(0,0,0,0.7)' // Adds a beautiful dark glow so it pops against the mountains
+            textShadow: '0 10px 40px rgba(0,0,0,0.7)' 
           }}
         >
           {vibe.title}
