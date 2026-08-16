@@ -106,7 +106,7 @@ export default function Home() {
               currentGenre === 'desiHipHop' ? 'var(--font-amsterdam)' : 
               'var(--font-BebasNote-Bold)',
             fontSize: 'clamp(50px, 10vw, 130px)', 
-            lineHeight: '1.2',
+            lineHeight: '1.0',
             fontWeight: 'normal',
             textShadow: '0 10px 40px rgba(0,0,0,0.7)' 
           }}
