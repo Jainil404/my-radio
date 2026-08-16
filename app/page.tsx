@@ -74,7 +74,7 @@ export default function Home() {
       {/* --- END SLIDE OUT MENU --- */}
 
 
-     {/* Top Row */}
+      {/* Top Row */}
       <header className="w-full flex items-start justify-between text-white z-30" style={{ padding: 'max(1.5rem, env(safe-area-inset-top)) max(2rem, env(safe-area-inset-right)) 0 max(2rem, env(safe-area-inset-left))' }}>
         
         <div className="flex flex-col gap-4">
@@ -133,24 +133,6 @@ export default function Home() {
           {vibe.title}
         </span>
       </div>
-        {/* HUD Details (Now dynamically pulls from vibe) */}
-        <div className="flex flex-col items-end gap-1.5 mt-1 drop-shadow-md">
-          <div className="border border-white/40 rounded-full px-3 py-1 mb-1 backdrop-blur-md bg-black/20 transition-all duration-500">
-            <span className="text-[14px] uppercase tracking-widest font-semibold text-white/95">
-              {vibe.hudSignal}
-            </span> 
-          </div>
-          <span className="text-[12px] uppercase tracking-widest text-white/90 transition-all duration-500">
-            Temp: {vibe.hudTemp}
-          </span>
-          <span className="text-[12px] uppercase tracking-widest text-white/75 transition-all duration-500">
-            Location: {vibe.hudLocation}
-          </span>
-          <span className="text-[12px] uppercase tracking-widest text-white/75 transition-all duration-500">
-            {vibe.hudLocationName}
-          </span>
-        </div>
-      </header>
 
       {/* The Player (Adding 'key' forces the player to fully reset when the genre changes) */}
       <footer className="w-full flex justify-center pb-8 px-4 z-30" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}>
