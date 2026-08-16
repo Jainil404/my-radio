@@ -97,7 +97,7 @@ export default function Home() {
             className="tracking-[0.1em] transition-all duration-500"
             style={{ 
               fontFamily: currentGenre === 'moody' ? 'var(--font-BebasNote-Bold)' : 'inherit',
-              fontSize: currentGenre === 'moody' ? '28px' : '15px', // Bebas looks much better when it is larger!
+              fontSize: currentGenre === 'moody' ? '56px' : '15px', // Bebas looks much better when it is larger!
               fontWeight: currentGenre === 'moody' ? 'normal' : '500'
             }}
           >
