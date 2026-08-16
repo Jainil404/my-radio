@@ -74,7 +74,7 @@ export default function Home() {
       {/* --- END SLIDE OUT MENU --- */}
 
 
-      {/* Top Row */}
+     {/* Top Row */}
       <header className="w-full flex items-start justify-between text-white z-30" style={{ padding: 'max(1.5rem, env(safe-area-inset-top)) max(2rem, env(safe-area-inset-right)) 0 max(2rem, env(safe-area-inset-left))' }}>
         
         <div className="flex flex-col gap-4">
@@ -90,23 +90,42 @@ export default function Home() {
           <Clock />
         </div>
         
-       {/* Massive Center Title Area */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-20 drop-shadow-2xl w-full px-4 text-center">
-        {/* Restored Original Tiny "Live" Text */}
-        <span className="text-[12px] uppercase tracking-[0.3em] font-bold text-accent mb-1">
-          Live
-        </span>
+        {/* TOP CENTER "LIVE" TEXT (Your Blue Square!) */}
+        <div className="absolute left-1/2 -translate-x-1/2 top-[max(1.5rem,env(safe-area-inset-top))] flex flex-col items-center opacity-90 text-center drop-shadow-md pointer-events-none">
+          <span className="text-[12px] uppercase tracking-[0.3em] font-bold text-accent">Live</span>
+        </div>
+
+        {/* HUD Details */}
+        <div className="flex flex-col items-end gap-1.5 mt-1 drop-shadow-md">
+          <div className="border border-white/40 rounded-full px-3 py-1 mb-1 backdrop-blur-md bg-black/20 transition-all duration-500">
+            <span className="text-[14px] uppercase tracking-widest font-semibold text-white/95">
+              {vibe.hudSignal}
+            </span> 
+          </div>
+          <span className="text-[12px] uppercase tracking-widest text-white/90 transition-all duration-500">
+            Temp: {vibe.hudTemp}
+          </span>
+          <span className="text-[12px] uppercase tracking-widest text-white/75 transition-all duration-500">
+            Location: {vibe.hudLocation}
+          </span>
+          <span className="text-[12px] uppercase tracking-widest text-white/75 transition-all duration-500">
+            {vibe.hudLocationName}
+          </span>
+        </div>
+      </header>
         
+      {/* Massive Center Title Area */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-20 drop-shadow-2xl w-full px-4 text-center">
         {/* Flawlessly Centered Main Title */}
         <span 
-          className="transition-all duration-700 w-full"
+          className="transition-all duration-700 w-full -mt-40" 
           style={{ 
             fontFamily: 
               currentGenre === 'bollywood' ? 'var(--font-pacifico)' : 
               currentGenre === 'desiHipHop' ? 'var(--font-amsterdam)' : 
               'var(--font-BebasNote-Bold)',
-            fontSize: 'clamp(50px, 5vw, 130px)', 
-            lineHeight: '1.0',
+            fontSize: 'clamp(50px, 10vw, 130px)', 
+            lineHeight: '1.2',
             fontWeight: 'normal',
             textShadow: '0 10px 40px rgba(0,0,0,0.7)' 
           }}
