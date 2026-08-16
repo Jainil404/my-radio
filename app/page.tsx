@@ -90,12 +90,20 @@ export default function Home() {
           <Clock />
         </div>
         
-        {/* Center Title (Now dynamically pulls from vibe) */}
+        {/* Center Title (Now dynamically pulls from vibe and font) */}
         <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 opacity-90 text-center drop-shadow-md">
           <span className="text-[12px] uppercase tracking-[0.3em] font-bold text-accent">Live</span>
-          <span className="text-[15px] tracking-[0.1em] font-medium transition-all duration-500">{vibe.title}</span>
+          <span 
+            className="tracking-[0.1em] transition-all duration-500"
+            style={{ 
+              fontFamily: currentGenre === 'moody' ? 'var(--font-BebasNote-Bold)' : 'inherit',
+              fontSize: currentGenre === 'moody' ? '28px' : '15px', // Bebas looks much better when it is larger!
+              fontWeight: currentGenre === 'moody' ? 'normal' : '500'
+            }}
+          >
+            {vibe.title}
+          </span>
         </div>
-
         {/* HUD Details (Now dynamically pulls from vibe) */}
         <div className="flex flex-col items-end gap-1.5 mt-1 drop-shadow-md">
           <div className="border border-white/40 rounded-full px-3 py-1 mb-1 backdrop-blur-md bg-black/20 transition-all duration-500">
