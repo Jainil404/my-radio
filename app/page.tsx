@@ -90,23 +90,28 @@ export default function Home() {
           <Clock />
         </div>
         
-        {/* Center Title (Now dynamically pulls from vibe and font) */}
-        <div className="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 opacity-90 text-center drop-shadow-md">
-          <span className="text-[12px] uppercase tracking-[0.3em] font-bold text-accent">Live</span>
-          <span 
-            className="tracking-[0.1em] transition-all duration-500"
-            style={{ 
-              fontFamily: 
-                currentGenre === 'bollywood' ? 'var(--font-pacifico)' : 
-                currentGenre === 'desiHipHop' ? 'var(--font-amsterdam)' : 
-                'var(--font-BebasNote-Bold)',
-              fontSize: '28px', // Kept them all at 28px so they are nice and readable!
-              fontWeight: 'normal'
-            }}
-          >
-            {vibe.title}
-          </span>
-        </div>
+       {/* Massive Center Title Area */}
+      <div className="flex-1 flex flex-col items-center justify-center w-full px-4 text-center z-30 pointer-events-none drop-shadow-2xl">
+        <span className="text-[14px] md:text-[18px] uppercase tracking-[0.5em] font-bold text-white/80 mb-2 md:mb-6">
+          Live
+        </span>
+        <span 
+          className="transition-all duration-700 w-full"
+          style={{ 
+            fontFamily: 
+              currentGenre === 'bollywood' ? 'var(--font-pacifico)' : 
+              currentGenre === 'desiHipHop' ? 'var(--font-amsterdam)' : 
+              'var(--font-BebasNote-Bold)',
+            // clamp() forces the text to be huge on desktop, but shrink safely on mobile!
+            fontSize: 'clamp(50px, 10vw, 130px)', 
+            lineHeight: '1.2',
+            fontWeight: 'normal',
+            textShadow: '0 10px 40px rgba(0,0,0,0.7)' // Adds a beautiful dark glow so it pops against the mountains
+          }}
+        >
+          {vibe.title}
+        </span>
+      </div>
         {/* HUD Details (Now dynamically pulls from vibe) */}
         <div className="flex flex-col items-end gap-1.5 mt-1 drop-shadow-md">
           <div className="border border-white/40 rounded-full px-3 py-1 mb-1 backdrop-blur-md bg-black/20 transition-all duration-500">
