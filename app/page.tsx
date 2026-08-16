@@ -118,7 +118,7 @@ export default function Home() {
       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-20 drop-shadow-2xl w-full px-4 text-center">
         {/* Flawlessly Centered Main Title */}
         <span 
-          className="transition-all duration-700 w-full -mt-40" 
+          className="transition-all duration-700 w-full -mt-40 text-white" 
           style={{ 
             fontFamily: 
               currentGenre === 'bollywood' ? 'var(--font-pacifico)' : 
