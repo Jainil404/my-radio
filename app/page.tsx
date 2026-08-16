@@ -127,7 +127,7 @@ export default function Home() {
             fontSize: 'clamp(50px, 10vw, 130px)', 
             lineHeight: '1.2',
             fontWeight: 'normal',
-            textShadow: '0 10px 40px rgba(0,0,0,0.7)' 
+            textShadow: '0 10px 40px rgb(253, 250, 250)' 
           }}
         >
           {vibe.title}
