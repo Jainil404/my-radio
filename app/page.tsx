@@ -18,11 +18,16 @@ export default function Home() {
   const currentPlaylist = playlists[currentGenre];
 
   return (
-   <main 
-      className="relative flex min-h-dvh flex-1 flex-col items-center justify-between overflow-hidden bg-cover bg-center transition-all duration-1000 ease-in-out"
-      style={{ backgroundImage: `url('${vibe.bgDesktop}')` }}
+    <main 
+      className="relative flex min-h-dvh flex-1 flex-col items-center justify-between overflow-hidden transition-all duration-1000 ease-in-out"
     >
-      {/* --- NEW VIDEO BACKGROUND LAYER --- */}
+      {/* 1. Static Background Image (Base Layer -z-30) */}
+      <div 
+        className="absolute inset-0 -z-30 bg-cover bg-center transition-all duration-1000 ease-in-out"
+        style={{ backgroundImage: `url('${vibe.bgDesktop}')` }}
+      />
+
+      {/* 2. NEW VIDEO BACKGROUND LAYER (Middle Layer -z-20) */}
       {vibe.bgVideo && (
         <video
           key={vibe.bgVideo}
@@ -30,7 +35,7 @@ export default function Home() {
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover -z-20 opacity-90 transition-opacity duration-1000"
+          className="absolute inset-0 w-full h-full object-cover -z-20 opacity-100 transition-opacity duration-1000"
         >
           <source src={vibe.bgVideo} type="video/mp4" />
         </video>
@@ -38,7 +43,6 @@ export default function Home() {
 
       {/* Background Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80 -z-10 transition-opacity duration-1000" />
-
       {/* --- SLIDE OUT MENU OVERLAY --- */}
       {/* 1. The dark background that fades in when menu opens */}
       {isMenuOpen && (
