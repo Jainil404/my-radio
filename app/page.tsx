@@ -18,21 +18,26 @@ export default function Home() {
   const currentPlaylist = playlists[currentGenre];
 
   return (
-    <main 
+   <main 
       className="relative flex min-h-dvh flex-1 flex-col items-center justify-between overflow-hidden bg-cover bg-center transition-all duration-1000 ease-in-out"
       style={{ backgroundImage: `url('${vibe.bgDesktop}')` }}
     >
+      {/* --- NEW VIDEO BACKGROUND LAYER --- */}
+      {vibe.bgVideo && (
+        <video
+          key={vibe.bgVideo}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover -z-20 opacity-90 transition-opacity duration-1000"
+        >
+          <source src={vibe.bgVideo} type="video/mp4" />
+        </video>
+      )}
+
       {/* Background Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80 -z-10 transition-opacity duration-1000" />
-
-      {/* Grain Overlay */}
-      <div 
-        className="absolute inset-0 -z-10 pointer-events-none opacity-30"
-        style={{ 
-          backgroundImage: `url("${NOISE_SVG}")`,
-          mixBlendMode: 'overlay' 
-        }} 
-      />
 
       {/* --- SLIDE OUT MENU OVERLAY --- */}
       {/* 1. The dark background that fades in when menu opens */}

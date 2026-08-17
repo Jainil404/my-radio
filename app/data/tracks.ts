@@ -355,6 +355,7 @@ export const genreDetails: Record<string, any> = {
     title: "Mountain's Choice",
     bgDesktop: "/bg/scene-wide.png", 
     bgMobile: "/bg/scene-tall.png",
+    bgVideo: "/bg/mountain.mp4",
     hudLocation: "34.1526° N, 77.5771° E",
     hudLocationName: '"MAGGI POINT - 1.2KM"',
     hudTemp: "4°C",
