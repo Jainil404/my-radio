@@ -222,9 +222,9 @@ export default function Player({ playlist }: { playlist: Track[] }) {
       </div>
 
       {/* MOBILE PLAYER (Forced layout matching your Inspect view screenshot) */}
-      <div className={`md:hidden flex flex-col rounded-[28px] p-6 gap-5 ${glassClasses}`}>
+      <div className={`md:hidden flex flex-col rounded-[28px] p-1 gap-0.4 ${glassClasses}`}>
         <div className="flex items-center gap-4">
-          <div className="relative w-16 h-16 shrink-0 rounded-full overflow-hidden flex items-center justify-center bg-black">
+          <div className="relative w-13 h-13 shrink-0 rounded-full overflow-hidden flex items-center justify-center bg-black">
              <div 
               id="yt-player-container-mobile"
               className="absolute w-[300%] h-[300%] pointer-events-none" 
@@ -261,7 +261,7 @@ export default function Player({ playlist }: { playlist: Track[] }) {
           <button onClick={handlePrev} className="p-2 text-white/80 hover:text-white transition-colors">
             <PrevIcon />
           </button>
-          <button onClick={togglePlay} className="w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-b from-accent to-orange-600 text-white shadow-[0_6px_20px_rgba(249,115,22,0.5)] ring-2 ring-white/30 transform active:scale-95 transition-all">
+          <button onClick={togglePlay} className="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-b from-accent to-orange-600 text-white shadow-[0_6px_20px_rgba(249,115,22,0.5)] ring-2 ring-white/30 transform active:scale-95 transition-all">
             {isPlaying ? <PauseIcon /> : <PlayIcon />}
           </button>
           <button onClick={handleNext} className="p-2 text-white/80 hover:text-white transition-colors">
