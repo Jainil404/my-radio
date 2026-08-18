@@ -13,37 +13,61 @@ export default function Home() {
   const [currentGenre, setCurrentGenre] = useState('bollywood');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  
+  // 2. Load the current vibe and playlist based on the selected genre
   const vibe = genreDetails[currentGenre];
   const currentPlaylist = playlists[currentGenre];
 
   return (
-    <main 
-      className="relative flex min-h-dvh flex-1 flex-col items-center justify-between overflow-hidden transition-all duration-1000 ease-in-out"
-    >
+    <main className="relative flex min-h-dvh flex-1 flex-col items-center justify-between overflow-hidden transition-all duration-1000 ease-in-out">
       
+      {/* 1. Static Background Image (Base Layer -z-30) */}
       <div 
         className="absolute inset-0 -z-30 bg-cover bg-center transition-all duration-1000 ease-in-out"
         style={{ backgroundImage: `url('${vibe.bgDesktop}')` }}
       />
 
-      
-      {vibe.bgVideo && (
+      {/* --- DESKTOP VIDEO BACKGROUND --- */}
+      {vibe.bgVideoDesktop && (
         <video
-          key={vibe.bgVideo}
+          key={vibe.bgVideoDesktop}
           autoPlay
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover -z-20 opacity-100 transition-opacity duration-1000"
+          className="hidden md:block absolute inset-0 w-full h-full object-cover -z-20 opacity-100 transition-opacity duration-1000"
         >
-          <source src={vibe.bgVideo} type="video/mp4" />
+          <source src={vibe.bgVideoDesktop} type="video/mp4" />
         </video>
       )}
 
-      
+      {/* --- MOBILE VIDEO BACKGROUND --- */}
+      {vibe.bgVideoMobile && (
+        <video
+          key={vibe.bgVideoMobile}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="md:hidden absolute inset-0 w-full h-full object-cover -z-20 opacity-100 transition-opacity duration-1000"
+        >
+          <source src={vibe.bgVideoMobile} type="video/mp4" />
+        </video>
+      )}
+
+      {/* Background Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80 -z-10 transition-opacity duration-1000" />
-     
+
+      {/* Grain Overlay */}
+      <div 
+        className="absolute inset-0 -z-10 pointer-events-none opacity-30"
+        style={{ 
+          backgroundImage: `url("${NOISE_SVG}")`,
+          mixBlendMode: 'overlay' 
+        }} 
+      />
+
+      {/* --- SLIDE OUT MENU OVERLAY --- */}
+      {/* 1. The dark background that fades in when menu opens */}
       {isMenuOpen && (
         <div 
           className="absolute inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity"
@@ -80,7 +104,6 @@ export default function Home() {
         </div>
       </div>
       {/* --- END SLIDE OUT MENU --- */}
-
 
       {/* Top Row */}
       <header className="w-full flex items-start justify-between text-white z-30" style={{ padding: 'max(1.5rem, env(safe-area-inset-top)) max(2rem, env(safe-area-inset-right)) 0 max(2rem, env(safe-area-inset-left))' }}>
