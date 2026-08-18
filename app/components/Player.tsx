@@ -35,8 +35,19 @@ const PrevIcon = () => (
   </svg>
 );
 
+// --- NEW: Shuffle Brain! Gets a random track that isn't the current one ---
+const getRandomIndex = (currentIndex: number, totalTracks: number) => {
+  if (totalTracks <= 1) return currentIndex;
+  let nextIndex;
+  do {
+    nextIndex = Math.floor(Math.random() * totalTracks);
+  } while (nextIndex === currentIndex); // Keep rolling until it's a new song
+  return nextIndex;
+};
+
 export default function Player({ playlist }: { playlist: Track[] }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  // Start with a random track right out of the gate!
+  const [currentIndex, setCurrentIndex] = useState(() => Math.floor(Math.random() * playlist.length));
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -49,9 +60,9 @@ export default function Player({ playlist }: { playlist: Track[] }) {
     stateRef.current = { currentIndex, playlist };
   }, [currentIndex, playlist]);
 
-  // Reset to the first track whenever the user switches to a new genre/playlist
+  // Reset to a NEW random track whenever the user switches to a new genre
   useEffect(() => {
-    setCurrentIndex(0);
+    setCurrentIndex(Math.floor(Math.random() * playlist.length));
   }, [playlist]);
 
   const track = playlist[currentIndex];
@@ -62,14 +73,14 @@ export default function Player({ playlist }: { playlist: Track[] }) {
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  // The Initialization Brain (Fixes Bug #3 - Race Conditions)
+  // The Initialization Brain (Loads API securely)
   useEffect(() => {
-    if (playerRef.current) return; // Prevent double initialization
+    if (playerRef.current) return; 
 
     const initializePlayer = () => {
       if (playerRef.current) return;
       playerRef.current = new window.YT.Player('yt-player-container', {
-        videoId: stateRef.current.playlist[0].videoId,
+        videoId: stateRef.current.playlist[stateRef.current.currentIndex].videoId,
         playerVars: { playsinline: 1, controls: 0, disablekb: 1, fs: 0, rel: 0 },
         events: {
           onReady: (e: any) => {
@@ -79,20 +90,20 @@ export default function Player({ playlist }: { playlist: Track[] }) {
             if (e.data === window.YT.PlayerState.PLAYING) setIsPlaying(true);
             if (e.data === window.YT.PlayerState.PAUSED) setIsPlaying(false);
             if (e.data === window.YT.PlayerState.ENDED) {
+              // Automatically pick a random track when a song naturally ends
               const { currentIndex, playlist } = stateRef.current;
-              setCurrentIndex((currentIndex + 1) % playlist.length);
+              setCurrentIndex(getRandomIndex(currentIndex, playlist.length));
             }
           },
           onError: (e: any) => {
-            console.error("YouTube Player Error");
+            console.error("YouTube Player Error - Skipping to random track");
             const { currentIndex, playlist } = stateRef.current;
-            setCurrentIndex((currentIndex + 1) % playlist.length);
+            setCurrentIndex(getRandomIndex(currentIndex, playlist.length));
           }
         }
       });
     };
 
-    // Inject the YouTube API securely and only once
     if (!window.YT || !window.YT.Player) {
       if (!document.getElementById('youtube-api-script')) {
         const tag = document.createElement('script');
@@ -110,20 +121,18 @@ export default function Player({ playlist }: { playlist: Track[] }) {
     } else {
       initializePlayer();
     }
-    
-    // We intentionally removed the "destroy" cleanup here so the player stays alive forever!
   }, []);
 
-  // Update YouTube player smoothly when the track changes (Fixes Bug #2)
+  // Update YouTube player smoothly when the track changes
   useEffect(() => {
     if (playerRef.current?.loadVideoById && playerRef.current?.cueVideoById) {
       if (isPlaying) {
-        playerRef.current.loadVideoById(track.videoId); // Load and play instantly
+        playerRef.current.loadVideoById(track.videoId); 
       } else {
-        playerRef.current.cueVideoById(track.videoId); // Silently load in the background without playing
+        playerRef.current.cueVideoById(track.videoId); 
       }
     }
-  }, [track.videoId]); // Run ONLY when the track changes
+  }, [track.videoId]); 
 
   // Progress ticker
   useEffect(() => {
@@ -148,8 +157,9 @@ export default function Player({ playlist }: { playlist: Track[] }) {
     }
   };
 
-  const handleNext = () => setCurrentIndex((prev) => (prev + 1) % playlist.length);
-  const handlePrev = () => setCurrentIndex((prev) => (prev - 1 + playlist.length) % playlist.length);
+  // Manual buttons now trigger the Shuffle Brain
+  const handleNext = () => setCurrentIndex((prev) => getRandomIndex(prev, playlist.length));
+  const handlePrev = () => setCurrentIndex((prev) => getRandomIndex(prev, playlist.length));
 
   const handleSeek = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!playerRef.current || !duration) return;
@@ -160,7 +170,6 @@ export default function Player({ playlist }: { playlist: Track[] }) {
     setProgress(seekTo);
   };
 
-  // Glassmorphism classes
   const glassClasses = "border border-white/10 bg-gradient-to-b from-white/[0.15] to-white/[0.055] backdrop-blur-3xl backdrop-saturate-[1.7] shadow-[0_16px_48px_-12px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.2)]";
 
   return (
