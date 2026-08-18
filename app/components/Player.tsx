@@ -73,13 +73,18 @@ export default function Player({ playlist }: { playlist: Track[] }) {
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  // The Initialization Brain (Loads API securely)
+  // The Initialization Brain
   useEffect(() => {
     if (playerRef.current) return; 
 
     const initializePlayer = () => {
       if (playerRef.current) return;
-      playerRef.current = new window.YT.Player('yt-player-container', {
+      
+      // Check which container is currently visible on the screen
+      const isMobile = window.innerWidth < 640;
+      const containerId = isMobile ? 'yt-player-container-mobile' : 'yt-player-container';
+
+      playerRef.current = new window.YT.Player(containerId, {
         videoId: stateRef.current.playlist[stateRef.current.currentIndex].videoId,
         playerVars: { playsinline: 1, controls: 0, disablekb: 1, fs: 0, rel: 0 },
         events: {
@@ -90,7 +95,6 @@ export default function Player({ playlist }: { playlist: Track[] }) {
             if (e.data === window.YT.PlayerState.PLAYING) setIsPlaying(true);
             if (e.data === window.YT.PlayerState.PAUSED) setIsPlaying(false);
             if (e.data === window.YT.PlayerState.ENDED) {
-              // Automatically pick a random track when a song naturally ends
               const { currentIndex, playlist } = stateRef.current;
               setCurrentIndex(getRandomIndex(currentIndex, playlist.length));
             }
