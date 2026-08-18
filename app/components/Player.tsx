@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Track } from '../data/tracks';
 
 // Tell TypeScript that YouTube will provide these variables later
@@ -10,7 +10,7 @@ declare global {
   }
 }
 
-// Define sub-components at module scope to prevent React remounting the vinyl animation
+// Define sub-components at module scope to prevent React remounting
 const PlayIcon = () => (
   <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 ml-1">
     <path d="M8 5v14l11-7z" />
@@ -42,6 +42,18 @@ export default function Player({ playlist }: { playlist: Track[] }) {
   const [duration, setDuration] = useState(0);
   
   const playerRef = useRef<any>(null);
+  
+  // We use a state ref to prevent "stale closures" when YouTube triggers an event
+  const stateRef = useRef({ currentIndex, playlist });
+  useEffect(() => {
+    stateRef.current = { currentIndex, playlist };
+  }, [currentIndex, playlist]);
+
+  // Reset to the first track whenever the user switches to a new genre/playlist
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [playlist]);
+
   const track = playlist[currentIndex];
 
   const formatTime = (seconds: number) => {
@@ -50,61 +62,68 @@ export default function Player({ playlist }: { playlist: Track[] }) {
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  const loadYouTubeAPI = useCallback(() => {
-    if (!window.YT) {
-      const tag = document.createElement('script');
-      tag.src = 'https://www.youtube.com/iframe_api';
-      const firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-      
-      window.onYouTubeIframeAPIReady = () => initPlayer();
-    } else {
-      initPlayer();
-    }
-  }, [track.videoId]);
-
-  const initPlayer = () => {
-    playerRef.current = new window.YT.Player('yt-player-container', {
-      videoId: track.videoId,
-      playerVars: {
-        playsinline: 1,
-        controls: 0,
-        disablekb: 1,
-        fs: 0,
-        rel: 0,
-      },
-      events: {
-        onReady: (e: any) => {
-          setDuration(e.target.getDuration());
-          if (isPlaying) e.target.playVideo();
-        },
-        onStateChange: (e: any) => {
-          if (e.data === window.YT.PlayerState.PLAYING) setIsPlaying(true);
-          if (e.data === window.YT.PlayerState.PAUSED) setIsPlaying(false);
-          if (e.data === window.YT.PlayerState.ENDED) handleNext();
-        },
-        onError: (e: any) => {
-          console.error(`YouTube Error: ${e.data} on video ${track.videoId}`);
-          handleNext();
-        }
-      }
-    });
-  };
-
+  // The Initialization Brain (Fixes Bug #3 - Race Conditions)
   useEffect(() => {
-    loadYouTubeAPI();
-    return () => {
-      if (playerRef.current?.destroy) playerRef.current.destroy();
+    if (playerRef.current) return; // Prevent double initialization
+
+    const initializePlayer = () => {
+      if (playerRef.current) return;
+      playerRef.current = new window.YT.Player('yt-player-container', {
+        videoId: stateRef.current.playlist[0].videoId,
+        playerVars: { playsinline: 1, controls: 0, disablekb: 1, fs: 0, rel: 0 },
+        events: {
+          onReady: (e: any) => {
+            setDuration(e.target.getDuration());
+          },
+          onStateChange: (e: any) => {
+            if (e.data === window.YT.PlayerState.PLAYING) setIsPlaying(true);
+            if (e.data === window.YT.PlayerState.PAUSED) setIsPlaying(false);
+            if (e.data === window.YT.PlayerState.ENDED) {
+              const { currentIndex, playlist } = stateRef.current;
+              setCurrentIndex((currentIndex + 1) % playlist.length);
+            }
+          },
+          onError: (e: any) => {
+            console.error("YouTube Player Error");
+            const { currentIndex, playlist } = stateRef.current;
+            setCurrentIndex((currentIndex + 1) % playlist.length);
+          }
+        }
+      });
     };
+
+    // Inject the YouTube API securely and only once
+    if (!window.YT || !window.YT.Player) {
+      if (!document.getElementById('youtube-api-script')) {
+        const tag = document.createElement('script');
+        tag.id = 'youtube-api-script';
+        tag.src = 'https://www.youtube.com/iframe_api';
+        const firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+      }
+      
+      const existingCallback = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => {
+        if (existingCallback) existingCallback();
+        initializePlayer();
+      };
+    } else {
+      initializePlayer();
+    }
+    
+    // We intentionally removed the "destroy" cleanup here so the player stays alive forever!
   }, []);
 
-  // Update track when index changes
+  // Update YouTube player smoothly when the track changes (Fixes Bug #2)
   useEffect(() => {
-    if (playerRef.current?.loadVideoById) {
-      playerRef.current.loadVideoById(track.videoId);
-      if (!isPlaying) playerRef.current.pauseVideo();
+    if (playerRef.current?.loadVideoById && playerRef.current?.cueVideoById) {
+      if (isPlaying) {
+        playerRef.current.loadVideoById(track.videoId); // Load and play instantly
+      } else {
+        playerRef.current.cueVideoById(track.videoId); // Silently load in the background without playing
+      }
     }
-  }, [currentIndex, track.videoId]);
+  }, [track.videoId]); // Run ONLY when the track changes
 
   // Progress ticker
   useEffect(() => {
@@ -201,9 +220,9 @@ export default function Player({ playlist }: { playlist: Track[] }) {
       <div className={`sm:hidden flex flex-col rounded-[26px] p-5 gap-4 ${glassClasses}`}>
         <div className="flex items-center gap-4">
           <div className="relative w-16 h-16 shrink-0 rounded-full overflow-hidden flex items-center justify-center bg-black">
+             {/* The mobile player relies on the hidden desktop iframe for sound, but still visually spins! */}
              <div 
-              id="yt-player-container-mobile" 
-              className="absolute w-[300%] h-[300%] pointer-events-none" 
+              className="absolute w-[300%] h-[300%] pointer-events-none bg-zinc-900" 
               style={{ animation: 'var(--animate-spin-slow)', animationPlayState: isPlaying ? 'running' : 'paused' }}
             />
             <div className="absolute w-2.5 h-2.5 bg-black/70 ring-2 ring-white/40 rounded-full z-10" />

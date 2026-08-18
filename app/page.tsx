@@ -167,8 +167,8 @@ export default function Home() {
 
       {/* The Player (Adding 'key' forces the player to fully reset when the genre changes) */}
       <footer className="w-full flex justify-center pb-8 px-4 z-30" style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom))' }}>
-        <Player key={currentGenre} playlist={currentPlaylist} />
-      </footer>
+  <Player playlist={currentPlaylist} />
+</footer>
     </main>
   );
 }
