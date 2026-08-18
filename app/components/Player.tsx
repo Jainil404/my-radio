@@ -10,43 +10,42 @@ declare global {
   }
 }
 
-// Define sub-components at module scope to prevent React remounting
+// Clean icons matching your layout
 const PlayIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 ml-1">
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 ml-0.5">
     <path d="M8 5v14l11-7z" />
   </svg>
 );
 
 const PauseIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
     <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
   </svg>
 );
 
 const NextIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
     <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
   </svg>
 );
 
 const PrevIcon = () => (
-  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
     <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
   </svg>
 );
 
-// --- NEW: Shuffle Brain! Gets a random track that isn't the current one ---
+// Shuffle Brain
 const getRandomIndex = (currentIndex: number, totalTracks: number) => {
   if (totalTracks <= 1) return currentIndex;
   let nextIndex;
   do {
     nextIndex = Math.floor(Math.random() * totalTracks);
-  } while (nextIndex === currentIndex); // Keep rolling until it's a new song
+  } while (nextIndex === currentIndex);
   return nextIndex;
 };
 
 export default function Player({ playlist }: { playlist: Track[] }) {
-  // Start with a random track right out of the gate!
   const [currentIndex, setCurrentIndex] = useState(() => Math.floor(Math.random() * playlist.length));
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -54,13 +53,11 @@ export default function Player({ playlist }: { playlist: Track[] }) {
   
   const playerRef = useRef<any>(null);
   
-  // We use a state ref to prevent "stale closures" when YouTube triggers an event
   const stateRef = useRef({ currentIndex, playlist });
   useEffect(() => {
     stateRef.current = { currentIndex, playlist };
   }, [currentIndex, playlist]);
 
-  // Reset to a NEW random track whenever the user switches to a new genre
   useEffect(() => {
     setCurrentIndex(Math.floor(Math.random() * playlist.length));
   }, [playlist]);
@@ -73,16 +70,15 @@ export default function Player({ playlist }: { playlist: Track[] }) {
     return `${m}:${s.toString().padStart(2, '0')}`;
   };
 
-  // The Initialization Brain
+  // Initialization Brain targeting both desktop and mobile containers safely
   useEffect(() => {
     if (playerRef.current) return; 
 
     const initializePlayer = () => {
       if (playerRef.current) return;
       
-      // Check which container is currently visible on the screen
-      const isMobile = window.innerWidth < 640;
-      const containerId = isMobile ? 'yt-player-container-mobile' : 'yt-player-container';
+      const isMobileScreen = window.innerWidth < 768;
+      const containerId = isMobileScreen ? 'yt-player-container-mobile' : 'yt-player-container';
 
       playerRef.current = new window.YT.Player(containerId, {
         videoId: stateRef.current.playlist[stateRef.current.currentIndex].videoId,
@@ -100,7 +96,7 @@ export default function Player({ playlist }: { playlist: Track[] }) {
             }
           },
           onError: (e: any) => {
-            console.error("YouTube Player Error - Skipping to random track");
+            console.error("YouTube Player Error - Skipping track");
             const { currentIndex, playlist } = stateRef.current;
             setCurrentIndex(getRandomIndex(currentIndex, playlist.length));
           }
@@ -127,7 +123,6 @@ export default function Player({ playlist }: { playlist: Track[] }) {
     }
   }, []);
 
-  // Update YouTube player smoothly when the track changes
   useEffect(() => {
     if (playerRef.current?.loadVideoById && playerRef.current?.cueVideoById) {
       if (isPlaying) {
@@ -138,7 +133,6 @@ export default function Player({ playlist }: { playlist: Track[] }) {
     }
   }, [track.videoId]); 
 
-  // Progress ticker
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isPlaying) {
@@ -161,7 +155,6 @@ export default function Player({ playlist }: { playlist: Track[] }) {
     }
   };
 
-  // Manual buttons now trigger the Shuffle Brain
   const handleNext = () => setCurrentIndex((prev) => getRandomIndex(prev, playlist.length));
   const handlePrev = () => setCurrentIndex((prev) => getRandomIndex(prev, playlist.length));
 
@@ -180,9 +173,8 @@ export default function Player({ playlist }: { playlist: Track[] }) {
     <div className="w-full max-w-xl text-white font-sans">
       
       {/* DESKTOP PLAYER */}
-      <div className={`hidden sm:flex items-center rounded-full p-3 pr-5 ${glassClasses}`}>
+      <div className={`hidden md:flex items-center rounded-full p-3 pr-5 ${glassClasses}`}>
         <div className="relative w-20 h-20 shrink-0 rounded-full overflow-hidden flex items-center justify-center bg-black">
-          {/* Visible Iframe rendered here */}
           <div 
             id="yt-player-container" 
             className="absolute w-[300%] h-[300%] pointer-events-none" 
@@ -229,51 +221,52 @@ export default function Player({ playlist }: { playlist: Track[] }) {
         </div>
       </div>
 
-      {/* MOBILE PLAYER */}
-      <div className={`sm:hidden flex flex-col rounded-[26px] p-5 gap-4 ${glassClasses}`}>
+      {/* MOBILE PLAYER (Forced layout matching your Inspect view screenshot) */}
+      <div className={`md:hidden flex flex-col rounded-[28px] p-6 gap-5 ${glassClasses}`}>
         <div className="flex items-center gap-4">
           <div className="relative w-16 h-16 shrink-0 rounded-full overflow-hidden flex items-center justify-center bg-black">
-             {/* The mobile player relies on the hidden desktop iframe for sound, but still visually spins! */}
              <div 
-              className="absolute w-[300%] h-[300%] pointer-events-none bg-zinc-900" 
+              id="yt-player-container-mobile"
+              className="absolute w-[300%] h-[300%] pointer-events-none" 
               style={{ animation: 'var(--animate-spin-slow)', animationPlayState: isPlaying ? 'running' : 'paused' }}
             />
             <div className="absolute w-2.5 h-2.5 bg-black/70 ring-2 ring-white/40 rounded-full z-10" />
           </div>
           <div className="flex-1 min-w-0">
-            <h2 className="text-[16px] font-semibold truncate">{track.title}</h2>
-            <p className="text-[13px] text-white/70 truncate">{track.artist}</p>
+            <h2 className="text-[17px] font-bold truncate">{track.title}</h2>
+            <p className="text-[13.5px] text-white/70 truncate">{track.artist}</p>
           </div>
         </div>
 
+        {/* Progress Bar */}
         <div 
-          className="h-8 flex items-center cursor-pointer touch-none"
+          className="h-6 flex items-center cursor-pointer touch-none group"
           onPointerDown={handleSeek}
         >
-          <div className="w-full h-1 bg-white/15 relative rounded-full">
+          <div className="w-full h-1.5 bg-white/20 relative rounded-full">
             <div 
-              className="absolute top-0 left-0 h-full bg-accent rounded-full shadow-[0_0_8px_rgba(249,115,22,0.6)]"
+              className="absolute top-0 left-0 h-full bg-accent rounded-full shadow-[0_0_10px_rgba(249,115,22,0.8)]"
               style={{ width: `${(progress / duration) * 100 || 0}%` }}
             />
           </div>
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="text-[11px] tabular-nums text-white/50">
-            {formatTime(progress)} / {formatTime(duration)}
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <button onClick={handlePrev} className="p-3 text-white/70 hover:text-white transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
-              <PrevIcon />
-            </button>
-            <button onClick={togglePlay} className="w-[52px] h-[52px] flex items-center justify-center rounded-full bg-gradient-to-b from-accent to-orange-600 text-white shadow-[0_4px_12px_rgba(249,115,22,0.4)] ring-1 ring-white/25">
-              {isPlaying ? <PauseIcon /> : <PlayIcon />}
-            </button>
-            <button onClick={handleNext} className="p-3 text-white/70 hover:text-white transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
-              <NextIcon />
-            </button>
-          </div>
+        {/* Timestamps & Spotify-Style Center Play Controls */}
+        <div className="flex items-center justify-between text-[12px] tabular-nums text-white/60">
+          <span>{formatTime(progress)}</span>
+          <span>{formatTime(duration)}</span>
+        </div>
+
+        <div className="flex items-center justify-center gap-8 pb-1">
+          <button onClick={handlePrev} className="p-2 text-white/80 hover:text-white transition-colors">
+            <PrevIcon />
+          </button>
+          <button onClick={togglePlay} className="w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-b from-accent to-orange-600 text-white shadow-[0_6px_20px_rgba(249,115,22,0.5)] ring-2 ring-white/30 transform active:scale-95 transition-all">
+            {isPlaying ? <PauseIcon /> : <PlayIcon />}
+          </button>
+          <button onClick={handleNext} className="p-2 text-white/80 hover:text-white transition-colors">
+            <NextIcon />
+          </button>
         </div>
       </div>
 
