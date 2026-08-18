@@ -13,7 +13,7 @@ export default function Home() {
   const [currentGenre, setCurrentGenre] = useState('bollywood');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // 2. Load the current vibe and playlist based on the selected genre
+  
   const vibe = genreDetails[currentGenre];
   const currentPlaylist = playlists[currentGenre];
 
@@ -21,13 +21,13 @@ export default function Home() {
     <main 
       className="relative flex min-h-dvh flex-1 flex-col items-center justify-between overflow-hidden transition-all duration-1000 ease-in-out"
     >
-      {/* 1. Static Background Image (Base Layer -z-30) */}
+      
       <div 
         className="absolute inset-0 -z-30 bg-cover bg-center transition-all duration-1000 ease-in-out"
         style={{ backgroundImage: `url('${vibe.bgDesktop}')` }}
       />
 
-      {/* 2. NEW VIDEO BACKGROUND LAYER (Middle Layer -z-20) */}
+      
       {vibe.bgVideo && (
         <video
           key={vibe.bgVideo}
@@ -41,10 +41,9 @@ export default function Home() {
         </video>
       )}
 
-      {/* Background Gradient Overlay */}
+      
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80 -z-10 transition-opacity duration-1000" />
-      {/* --- SLIDE OUT MENU OVERLAY --- */}
-      {/* 1. The dark background that fades in when menu opens */}
+     
       {isMenuOpen && (
         <div 
           className="absolute inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity"
