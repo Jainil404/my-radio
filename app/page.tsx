@@ -27,30 +27,30 @@ export default function Home() {
       />
 
       {/* --- DESKTOP VIDEO BACKGROUND --- */}
-      {vibe.bgVideoDesktop && (
+      {vibe.bgVideodesktop && (
         <video
-          key={vibe.bgVideoDesktop}
+          key={vibe.bgVideodesktop}
           autoPlay
           loop
           muted
           playsInline
           className="hidden md:block absolute inset-0 w-full h-full object-cover -z-20 opacity-100 transition-opacity duration-1000"
         >
-          <source src={vibe.bgVideoDesktop} type="video/mp4" />
+          <source src={vibe.bgVideodesktop} type="video/mp4" />
         </video>
       )}
 
       {/* --- MOBILE VIDEO BACKGROUND --- */}
-      {vibe.bgVideoMobile && (
+      {vibe.bgVideomobile && (
         <video
-          key={vibe.bgVideoMobile}
+          key={vibe.bgVideomobile}
           autoPlay
           loop
           muted
           playsInline
           className="md:hidden absolute inset-0 w-full h-full object-cover -z-20 opacity-100 transition-opacity duration-1000"
         >
-          <source src={vibe.bgVideoMobile} type="video/mp4" />
+          <source src={vibe.bgVideomobile} type="video/mp4" />
         </video>
       )}
 
