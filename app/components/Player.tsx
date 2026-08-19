@@ -46,7 +46,10 @@ const getRandomIndex = (currentIndex: number, totalTracks: number) => {
 };
 
 export default function Player({ playlist }: { playlist: Track[] }) {
-  const [currentIndex, setCurrentIndex] = useState(() => Math.floor(Math.random() * playlist.length));
+  const [currentIndex, setCurrentIndex] = useState(0);
+  useEffect(() => {
+  setCurrentIndex(Math.floor(Math.random() * playlist.length));
+}, [playlist]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
