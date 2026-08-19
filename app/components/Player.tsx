@@ -240,7 +240,7 @@ export default function Player({ playlist }: { playlist: Track[] }) {
 
         {/* Progress Bar */}
         <div 
-          className="h-6 flex items-center cursor-pointer touch-none group"
+          className="h-6 flex items-center cursor-pointer touch-none group px-3"
           onPointerDown={handleSeek}
         >
           <div className="w-full h-1.5 bg-white/20 relative rounded-full">
@@ -252,7 +252,7 @@ export default function Player({ playlist }: { playlist: Track[] }) {
         </div>
 
         {/* Timestamps & Spotify-Style Center Play Controls */}
-        <div className="flex items-center justify-between text-[12px] tabular-nums text-white/60">
+        <div className="flex items-center justify-between text-[12px] tabular-nums text-white/60 px-3">
           <span>{formatTime(progress)}</span>
           <span>{formatTime(duration)}</span>
         </div>

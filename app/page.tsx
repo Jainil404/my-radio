@@ -133,13 +133,13 @@ export default function Home() {
               {vibe.hudSignal}
             </span> 
           </div>
-          <span className="text-[12px] uppercase tracking-widest text-white/90 transition-all duration-500">
+          <span className="text-[10px] md:text-[12px] uppercase tracking-widest text-white/90 transition-all duration-500">
             Temp: {vibe.hudTemp}
           </span>
-          <span className="text-[12px] uppercase tracking-widest text-white/75 transition-all duration-500">
+          <span className="text-[10px] md:text-[12px] uppercase tracking-widest text-white/75 transition-all duration-500">
             Location: {vibe.hudLocation}
           </span>
-          <span className="text-[12px] uppercase tracking-widest text-white/75 transition-all duration-500">
+          <span className="text-[10px] md:text-[12px] uppercase tracking-widest text-white/75 transition-all duration-500">
             {vibe.hudLocationName}
           </span>
         </div>
