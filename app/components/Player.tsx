@@ -85,7 +85,7 @@ export default function Player({ playlist }: { playlist: Track[] }) {
 
       playerRef.current = new window.YT.Player(containerId, {
         videoId: stateRef.current.playlist[stateRef.current.currentIndex].videoId,
-        playerVars: { playsinline: 1, controls: 0, disablekb: 1, fs: 0, rel: 0 },
+        playerVars: { playsinline: 1, controls: 0, disablekb: 1, fs: 0, rel: 0 , origin: window.location.origin },
         events: {
           onReady: (e: any) => {
             setDuration(e.target.getDuration());
