@@ -35,6 +35,37 @@ const PrevIcon = () => (
   </svg>
 );
 
+const QueueIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
+    <path d="M3 6h11v2H3V6zm0 5h11v2H3v-2zm0 5h7v2H3v-2z" />
+    <circle cx="17.5" cy="16.5" r="3" />
+    <path d="M18.5 5H22v2h-2v9.5h-1.5V5z" />
+  </svg>
+);
+
+const CloseIcon = () => (
+  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+    <path d="M18.3 5.71 12 12.01l-6.3-6.3-1.41 1.41 6.3 6.3-6.3 6.3 1.41 1.41 6.3-6.3 6.3 6.3 1.41-1.41-6.3-6.3 6.3-6.3z" />
+  </svg>
+);
+
+// Tiny "now playing" indicator shown on the active tracklist row
+const NowPlayingBars = ({ animated }: { animated: boolean }) => (
+  <span className="flex h-3 items-end justify-end gap-[2px]" aria-hidden="true">
+    {[
+      { h: '60%', delay: '0ms' },
+      { h: '100%', delay: '150ms' },
+      { h: '45%', delay: '300ms' },
+    ].map((bar) => (
+      <span
+        key={bar.delay}
+        className={`w-[3px] rounded-full bg-accent ${animated ? 'animate-pulse' : ''}`}
+        style={{ height: animated ? bar.h : '35%', animationDelay: bar.delay }}
+      />
+    ))}
+  </span>
+);
+
 // Shuffle Brain
 const getRandomIndex = (currentIndex: number, totalTracks: number) => {
   if (totalTracks <= 1) return currentIndex;
@@ -53,8 +84,11 @@ export default function Player({ playlist }: { playlist: Track[] }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isQueueOpen, setIsQueueOpen] = useState(false);
   
   const playerRef = useRef<any>(null);
+  const queueListRef = useRef<HTMLUListElement>(null);
+  const activeItemRef = useRef<HTMLLIElement>(null);
   
   const stateRef = useRef({ currentIndex, playlist });
   useEffect(() => {
@@ -161,6 +195,26 @@ export default function Player({ playlist }: { playlist: Track[] }) {
   const handleNext = () => setCurrentIndex((prev) => getRandomIndex(prev, playlist.length));
   const handlePrev = () => setCurrentIndex((prev) => getRandomIndex(prev, playlist.length));
 
+  // Tracklist: jump straight to a chosen song and collapse the sheet
+  const handleSelectTrack = (index: number) => {
+    setCurrentIndex(index);
+    setIsQueueOpen(false);
+  };
+
+  const toggleQueue = () => {
+    const next = !isQueueOpen;
+    setIsQueueOpen(next);
+    if (next) {
+      // Center the active row once the sheet is visible
+      requestAnimationFrame(() => {
+        const list = queueListRef.current;
+        const item = activeItemRef.current;
+        if (!list || !item) return;
+        list.scrollTop = item.offsetTop - list.clientHeight / 2 + item.clientHeight / 2;
+      });
+    }
+  };
+
   const handleSeek = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!playerRef.current || !duration) return;
     const rect = e.currentTarget.getBoundingClientRect();
@@ -173,7 +227,66 @@ export default function Player({ playlist }: { playlist: Track[] }) {
   const glassClasses = "border border-white/10 bg-gradient-to-b from-white/[0.15] to-white/[0.055] backdrop-blur-3xl backdrop-saturate-[1.7] shadow-[0_16px_48px_-12px_rgba(0,0,0,0.8),inset_0_1px_0_rgba(255,255,255,0.2)]";
 
   return (
-    <div className="w-full max-w-xl text-white font-sans">
+    <div className="relative w-full max-w-xl text-white font-sans">
+
+      {/* TRACKLIST BOTTOM SHEET (shared by desktop + mobile, floats above the player card) */}
+      <div
+        role="dialog"
+        aria-label="Tracklist"
+        inert={!isQueueOpen}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') setIsQueueOpen(false);
+        }}
+        className={`absolute bottom-full left-0 right-0 mb-3 flex flex-col overflow-hidden rounded-[28px] ${glassClasses} transition-all duration-300 ease-out motion-reduce:transition-none ${
+          isQueueOpen ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-6 opacity-0'
+        }`}
+      >
+        <div className="flex shrink-0 items-center justify-between px-5 pt-4 pb-2">
+          <div className="min-w-0">
+            <p className="text-[10.5px] uppercase tracking-[0.2em] text-white/50">Tracklist</p>
+            <h3 className="text-[15px] font-semibold">{playlist.length} tracks</h3>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsQueueOpen(false)}
+            aria-label="Close tracklist"
+            className="p-2 text-white/70 hover:text-white transition-colors"
+          >
+            <CloseIcon />
+          </button>
+        </div>
+
+        <ul
+          ref={queueListRef}
+          className="relative flex max-h-[42vh] flex-col gap-0.5 overflow-y-auto px-2 pb-2"
+        >
+          {playlist.map((t, i) => {
+            const isActive = i === currentIndex;
+            return (
+              <li key={`${t.id}-${i}`} ref={isActive ? activeItemRef : undefined}>
+                <button
+                  type="button"
+                  onClick={() => handleSelectTrack(i)}
+                  aria-current={isActive ? 'true' : undefined}
+                  className={`flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left transition-colors ${
+                    isActive ? 'bg-white/10 text-accent' : 'text-white hover:bg-white/[0.07]'
+                  }`}
+                >
+                  <span className="w-6 shrink-0 text-right text-[11px] tabular-nums text-white/40">
+                    {isActive ? <NowPlayingBars animated={isPlaying} /> : i + 1}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[14px] font-medium">{t.title}</span>
+                    <span className={`block truncate text-[12px] ${isActive ? 'text-accent/70' : 'text-white/60'}`}>
+                      {t.artist}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
       
       {/* DESKTOP PLAYER */}
       <div className={`hidden md:flex items-center rounded-full p-3 pr-5 ${glassClasses}`}>
@@ -221,6 +334,15 @@ export default function Player({ playlist }: { playlist: Track[] }) {
           <button onClick={handleNext} className="p-2 text-white/70 hover:text-white transition-colors">
             <NextIcon />
           </button>
+          <button
+            type="button"
+            onClick={toggleQueue}
+            aria-label="Toggle tracklist"
+            aria-expanded={isQueueOpen}
+            className={`p-2 transition-colors ${isQueueOpen ? 'text-accent' : 'text-white/70 hover:text-white'}`}
+          >
+            <QueueIcon />
+          </button>
         </div>
       </div>
 
@@ -260,16 +382,30 @@ export default function Player({ playlist }: { playlist: Track[] }) {
           <span>{formatTime(duration)}</span>
         </div>
 
-        <div className="flex items-center justify-center gap-8 pb-1">
-          <button onClick={handlePrev} className="p-2 text-white/80 hover:text-white transition-colors">
-            <PrevIcon />
-          </button>
-          <button onClick={togglePlay} className="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-b from-accent to-orange-600 text-white shadow-[0_6px_20px_rgba(249,115,22,0.5)] ring-2 ring-white/30 transform active:scale-95 transition-all">
-            {isPlaying ? <PauseIcon /> : <PlayIcon />}
-          </button>
-          <button onClick={handleNext} className="p-2 text-white/80 hover:text-white transition-colors">
-            <NextIcon />
-          </button>
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center px-3 pb-1">
+          <div aria-hidden="true" />
+          <div className="flex items-center justify-center gap-8">
+            <button onClick={handlePrev} className="p-2 text-white/80 hover:text-white transition-colors">
+              <PrevIcon />
+            </button>
+            <button onClick={togglePlay} className="w-14 h-14 flex items-center justify-center rounded-full bg-gradient-to-b from-accent to-orange-600 text-white shadow-[0_6px_20px_rgba(249,115,22,0.5)] ring-2 ring-white/30 transform active:scale-95 transition-all">
+              {isPlaying ? <PauseIcon /> : <PlayIcon />}
+            </button>
+            <button onClick={handleNext} className="p-2 text-white/80 hover:text-white transition-colors">
+              <NextIcon />
+            </button>
+          </div>
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={toggleQueue}
+              aria-label="Toggle tracklist"
+              aria-expanded={isQueueOpen}
+              className={`p-2 transition-colors ${isQueueOpen ? 'text-accent' : 'text-white/80 hover:text-white'}`}
+            >
+              <QueueIcon />
+            </button>
+          </div>
         </div>
       </div>
 
